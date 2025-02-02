@@ -10,7 +10,7 @@ if (!$result) {
 }
 
 // Buat objek PDF
-$pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+$pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor('Dinas DKUKMP Kabupaten Tanah Datar');
 $pdf->SetTitle('Laporan Pengecer');
@@ -46,7 +46,6 @@ $html .= '
     <thead>
         <tr style="background-color:#f2f2f2;">
             <th align="center"><b>No</b></th>
-            <th align="center"><b>ID Pengecer</b></th>
             <th align="center"><b>Nama Pengecer</b></th>
             <th align="center"><b>Jenis Kelamin</b></th>
             <th align="center"><b>Tanggal Lahir</b></th>
@@ -61,7 +60,6 @@ while ($row = $result->fetch_assoc()) {
     $html .= '
         <tr>
             <td align="center">' . $no . '</td>
-            <td align="center">' . $row['id_pengecer'] . '</td>
             <td align="center">' . $row['nama_pengecer'] . '</td>
             <td align="center">' . $row['jenis_kelamin'] . '</td>
             <td align="center">' . $row['tanggal_lahir'] . '</td>
@@ -78,7 +76,7 @@ $html .= '
 <br><br>
 <table border="0" cellspacing="0" cellpadding="5">
     <tr>
-        <td width="64%"></td>
+        <td width="74%"></td>
         <td>
             Batusangkar, ' . date("d F Y") . '<br>
             Kepala Dinas KUKMP<br>

@@ -13,8 +13,8 @@ if (!$result) {
 $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor('Dinas DKUKMP Kabupaten Tanah Datar');
-$pdf->SetTitle('Laporan Pupuk Masuk');
-$pdf->SetSubject('Laporan Pupuk');
+$pdf->SetTitle('Laporan Data Pupuk');
+$pdf->SetSubject('Laporan Data Pupuk');
 
 // Hilangkan header dan footer default
 $pdf->setPrintHeader(false);
@@ -37,7 +37,7 @@ $html = '
     </tr>
 </table>
  <hr style="height: 2px; background-color: black; border: none; margin-top: 20px;">
-<h3 style="text-align:center; margin-top:15px;">LAPORAN PUPUK MASUK</h3>
+<h3 style="text-align:center; margin-top:15px;">LAPORAN DATA PUPUK</h3>
 ';
 
 // Tambahkan tabel laporan
@@ -46,7 +46,6 @@ $html .= '
     <thead>
         <tr style="background-color:#f2f2f2;">
             <th align="center"><b>No</b></th>
-            <th align="center"><b>ID Pupuk</b></th>
             <th align="center"><b>Nama Pupuk</b></th>
             <th align="center"><b>Satuan</b></th>
             <th align="center"><b>Harga</b></th>
@@ -59,7 +58,6 @@ while ($row = $result->fetch_assoc()) {
     $html .= '
         <tr>
             <td align="center">' . $no . '</td>
-            <td align="center">' . $row['id_pupuk'] . '</td>
             <td align="center">' . $row['nama_pupuk'] . '</td>
             <td align="center">' . $row['satuan'] . '</td>
             <td align="center">Rp ' . number_format($row['harga'], 2, ',', '.') . '</td>
