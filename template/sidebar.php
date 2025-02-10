@@ -37,6 +37,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="permintaan.php" class="nav-link">
+                        <p>Permintaan</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="distribusi.php" class="nav-link">
                         <p>Distribusi</p>
                     </a>
