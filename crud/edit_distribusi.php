@@ -7,13 +7,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_pengecer = $_POST['id_pengecer'];
     $satuan = $_POST['satuan'];
     $tujuan = $_POST['tujuan'];
+    $kecamatan = $_POST['kecamatan'];
     $jumlah_keluar_baru = $_POST['jumlah_keluar'];
     $harga_distribusi = $_POST['harga_distribusi'];
     $harga_total_baru = $_POST['harga_total'];
     $tanggal_distribusi = date("j F Y", strtotime($_POST['tanggal_distribusi']));
     $dokumentasi = '';
 
-    // **Cek Data Lama**
     $query_old = "SELECT id_pupuk, jumlah_keluar, harga_distribusi, dokumentasi FROM distribusi WHERE id_distribusi = ?";
     $stmt_old = $koneksi->prepare($query_old);
     if (!$stmt_old) {
@@ -25,20 +25,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt_old->fetch();
     $stmt_old->close();
 
-    // **Proses Upload File Dokumentasi Jika Ada**
     if (!empty($_FILES['dokumentasi']['name'])) {
         $target_dir = "../uploads/";
         $file_name = time() . "_" . basename($_FILES["dokumentasi"]["name"]);
         $target_file = $target_dir . $file_name;
         $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-        // **Cek Format File**
         if ($file_type != "jpg" && $file_type != "png" && $file_type != "jpeg" && $file_type != "pdf") {
             echo "<script>alert('Format file harus JPG, JPEG, PNG, atau PDF!'); window.location.href='../distribusi.php';</script>";
             exit();
         }
 
-        // **Hapus File Lama Jika Ada**
         if (!empty($dokumentasi_lama)) {
             $file_path_lama = "../uploads/" . $dokumentasi_lama;
             if (file_exists($file_path_lama)) {
@@ -46,7 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        // **Pindahkan File Baru**
         if (move_uploaded_file($_FILES["dokumentasi"]["tmp_name"], $target_file)) {
             $dokumentasi = $file_name;
         } else {
@@ -54,11 +50,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
     } else {
-        // **Gunakan Dokumentasi Lama Jika Tidak Ada File Baru**
         $dokumentasi = $dokumentasi_lama;
     }
 
-    // **Ambil Harga Pupuk dari `pupuk`**
     $query_harga_pupuk = "SELECT harga FROM pupuk WHERE id_pupuk = ?";
     $stmt_harga_pupuk = $koneksi->prepare($query_harga_pupuk);
     if (!$stmt_harga_pupuk) {
@@ -74,7 +68,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error: Harga pupuk tidak ditemukan!");
     }
 
-    // **Kembalikan stok lama jika `id_pupuk` atau `jumlah_keluar` berubah**
     if ($id_pupuk_lama !== $id_pupuk_baru || $jumlah_keluar_lama !== $jumlah_keluar_baru) {
         $query_restore_stok = "UPDATE stok SET stok = stok + ?, harga_total = harga_total + (? * ?) WHERE id_pupuk = ?";
         $stmt_restore_stok = $koneksi->prepare($query_restore_stok);
@@ -86,17 +79,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_restore_stok->close();
     }
 
-    // **Update Data Distribusi**
-    $query_update = "UPDATE distribusi SET id_pupuk = ?, id_pengecer = ?, satuan = ?, tujuan = ?, tanggal_distribusi = ?, jumlah_keluar = ?, harga_distribusi = ?, harga_total = ?, dokumentasi = ? WHERE id_distribusi = ?";
+    $query_update = "UPDATE distribusi SET id_pupuk = ?, id_pengecer = ?, satuan = ?, tujuan = ?, kecamatan = ?, tanggal_distribusi = ?, jumlah_keluar = ?, harga_distribusi = ?, harga_total = ?, dokumentasi = ? WHERE id_distribusi = ?";
     $stmt_update = $koneksi->prepare($query_update);
     if (!$stmt_update) {
         die("Error: " . $koneksi->error);
     }
-    $stmt_update->bind_param("iisssiddsi", $id_pupuk_baru, $id_pengecer, $satuan, $tujuan, $tanggal_distribusi, $jumlah_keluar_baru, $harga_distribusi, $harga_total_baru, $dokumentasi, $id_distribusi);
+    $stmt_update->bind_param("iissssiddsi", $id_pupuk_baru, $id_pengecer, $satuan, $tujuan, $kecamatan, $tanggal_distribusi, $jumlah_keluar_baru, $harga_distribusi, $harga_total_baru, $dokumentasi, $id_distribusi);
     $stmt_update->execute();
     $stmt_update->close();
 
-    // **Kurangi stok baru**
     $query_check_stok = "SELECT stok, harga_total FROM stok WHERE id_pupuk = ?";
     $stmt_check_stok = $koneksi->prepare($query_check_stok);
     if (!$stmt_check_stok) {

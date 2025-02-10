@@ -1,6 +1,4 @@
-<?php include 'template/header.php'; 
-
-?>
+<?php include 'template/header.php'; ?>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
@@ -17,14 +15,14 @@
                 </div>
             </div>
             <div class="app-content">
-    <div class="container-fluid">
-        <div class="card">
-            <div class="card-header">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahPermintaan">
-                    Tambah Data
-                </button>
-            </div>
-            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="card">
+                        <div class="card-header">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahPermintaan">
+                                Tambah Data
+                            </button>
+                        </div>
+                        <div class="card-body">
                             <?php
                             include 'koneksi.php';
                             $query = "SELECT * FROM permintaan";
@@ -92,6 +90,69 @@
                                             <a href='crud/hapus_permintaan.php?id={$row['id_permintaan']}' onclick='return confirm(\"Apakah Anda yakin ingin menghapus data ini?\")' class='btn btn-danger btn-sm'>Hapus</a>
                                         </td>
                                     </tr>";
+
+                                    // Modal Edit Permintaan
+                                    echo "<div class='modal fade' id='modalEditPermintaan{$row['id_permintaan']}' tabindex='-1' aria-labelledby='modalEditPermintaanLabel' aria-hidden='true'>
+                                        <div class='modal-dialog'>
+                                            <div class='modal-content'>
+                                                <div class='modal-header'>
+                                                    <h5 class='modal-title' id='modalEditPermintaanLabel'>Edit Data Permintaan</h5>
+                                                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                                                </div>
+                                                <div class='modal-body'>
+                                                    <form action='crud/edit_permintaan.php' method='post' enctype='multipart/form-data'>
+                                                        <input type='hidden' name='id_permintaan' value='{$row['id_permintaan']}'>
+                                                        <div class='mb-3'>
+                                                            <label for='tanggal_permintaan' class='form-label'>Tanggal Permintaan</label>
+                                                            <input type='date' class='form-control' name='tanggal_permintaan' value='{$row['tanggal_permintaan']}' required>
+                                                        </div>
+                                                        <div class='mb-3'>
+                                                            <label for='nama_distributor' class='form-label'>Nama Distributor</label>
+                                                            <input type='text' class='form-control' name='nama_distributor' value='{$row['nama_distributor']}' required>
+                                                        </div>
+                                                        <div class='mb-3'>
+                                                            <label for='id_pupuk' class='form-label'>Nama Pupuk</label>
+                                                            <select class='form-control' name='id_pupuk' required>";
+                                                                $query_pupuk = "SELECT id_pupuk, nama_pupuk FROM pupuk";
+                                                                $result_pupuk = $koneksi->query($query_pupuk);
+                                                                while ($row_pupuk = $result_pupuk->fetch_assoc()) {
+                                                                    $selected = $row['id_pupuk'] == $row_pupuk['id_pupuk'] ? 'selected' : '';
+                                                                    echo "<option value='{$row_pupuk['id_pupuk']}' $selected>{$row_pupuk['nama_pupuk']}</option>";
+                                                                }
+                                    echo "                      </select>
+                                                        </div>
+                                                        <div class='mb-3'>
+                                                            <label for='jumlah' class='form-label'>Jumlah</label>
+                                                            <input type='number' class='form-control' name='jumlah' value='{$row['jumlah']}' required>
+                                                        </div>
+                                                        <div class='mb-3'>
+                                                            <label for='kecamatan' class='form-label'>Kecamatan</label>
+                                                            <input type='text' class='form-control' name='kecamatan' value='{$row['kecamatan']}' required>
+                                                        </div>
+                                                        <div class='mb-3'>
+                                                            <label for='dokumentasi' class='form-label'>Dokumentasi</label>
+                                                            <input type='file' class='form-control' name='dokumentasi'>
+                                                            <small>File sebelumnya: {$row['dokumentasi']}</small>
+                                                        </div>
+                                                        <div class='mb-3'>
+                                                            <label for='keterangan' class='form-label'>Keterangan</label>
+                                                            <textarea class='form-control' name='keterangan' rows='3'>{$row['keterangan']}</textarea>
+                                                        </div>
+                                                        <div class='mb-3'>
+                                                            <label for='status' class='form-label'>Status</label>
+                                                            <select class='form-control' name='status' required>
+                                                                <option value='Pending' " . ($row['status'] == 'Pending' ? 'selected' : '') . ">Pending</option>
+                                                                <option value='Diproses' " . ($row['status'] == 'Diproses' ? 'selected' : '') . ">Diproses</option>
+                                                                <option value='Selesai' " . ($row['status'] == 'Selesai' ? 'selected' : '') . ">Selesai</option>
+                                                                <option value='Ditolak' " . ($row['status'] == 'Ditolak' ? 'selected' : '') . ">Ditolak</option>
+                                                            </select>
+                                                        </div>
+                                                        <button type='submit' class='btn btn-primary'>Simpan</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>";
                                     $no++;
                                 }
                                 echo "</tbody></table>";
@@ -104,7 +165,6 @@
                     </div>
                 </div>
             </div>
-
         </main>
         <footer class="app-footer"></footer>
     </div>
@@ -115,26 +175,23 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTambahPermintaanLabel">Tambah Data Permintaan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss='modal' aria-label='Close'></button>
                 </div>
                 <div class="modal-body">
-                    <form action="crud/tambah_permintaan.php" method="post" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="tanggal_permintaan" class="form-label">Tanggal Permintaan</label>
-                            <input type="date" class="form-control" id="tanggal_permintaan" name="tanggal_permintaan" required>
+                    <form action='crud/tambah-permintaan.php' method='post' enctype='multipart/form-data'>
+                        <div class='mb-3'>
+                            <label for='tanggal_permintaan' class='form-label'>Tanggal Permintaan</label>
+                            <input type='date' class='form-control' name='tanggal_permintaan' required>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="nama_distributor" class="form-label">Nama Distributor</label>
-                            <input type="text" class="form-control" id="nama_distributor" name="nama_distributor" required>
+                        <div class='mb-3'>
+                            <label for='nama_distributor' class='form-label'>Nama Distributor</label>
+                            <input type='text' class='form-control' name='nama_distributor' required>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="id_pupuk" class="form-label">Nama Pupuk</label>
-                            <select class="form-control" id="id_pupuk" name="id_pupuk" required>
-                                <option value="">-- Pilih Pupuk --</option>
+                        <div class='mb-3'>
+                            <label for='id_pupuk' class='form-label'>Nama Pupuk</label>
+                            <select class='form-control' name='id_pupuk' required>
+                                <option value=''>-- Pilih Pupuk --</option>
                                 <?php
-                                include 'koneksi.php';
                                 $query_pupuk = "SELECT id_pupuk, nama_pupuk FROM pupuk";
                                 $result_pupuk = $koneksi->query($query_pupuk);
                                 while ($row_pupuk = $result_pupuk->fetch_assoc()) {
@@ -143,44 +200,36 @@
                                 ?>
                             </select>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="jumlah" class="form-label">Jumlah</label>
-                            <input type="number" class="form-control" id="jumlah" name="jumlah" required>
+                        <div class='mb-3'>
+                            <label for='jumlah' class='form-label'>Jumlah</label>
+                            <input type='number' class='form-control' name='jumlah' required>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="kecamatan" class="form-label">Kecamatan</label>
-                            <input type="text" class="form-control" id="kecamatan" name="kecamatan" required>
+                        <div class='mb-3'>
+                            <label for='kecamatan' class='form-label'>Kecamatan</label>
+                            <input type='text' class='form-control' name='kecamatan' required>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="dokumentasi" class="form-label">Dokumentasi</label>
-                            <input type="file" class="form-control" id="dokumentasi" name="dokumentasi">
+                        <div class='mb-3'>
+                            <label for='dokumentasi' class='form-label'>Dokumentasi</label>
+                            <input type='file' class='form-control' name='dokumentasi'>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="keterangan" class="form-label">Keterangan</label>
-                            <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
+                        <div class='mb-3'>
+                            <label for='keterangan' class='form-label'>Keterangan</label>
+                            <textarea class='form-control' name='keterangan' rows='3'></textarea>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-control" id="status" name="status" required>
-                                <option value="Pending">Pending</option>
-                                <option value="Diproses">Diproses</option>
-                                <option value="Selesai">Selesai</option>
-                                <option value="Ditolak">Ditolak</option>
+                        <div class='mb-3'>
+                            <label for='status' class='form-label'>Status</label>
+                            <select class='form-control' name='status' required>
+                                <option value='Pending'>Pending</option>
+                                <option value='Diproses'>Diproses</option>
+                                <option value='Selesai'>Selesai</option>
+                                <option value='Ditolak'>Ditolak</option>
                             </select>
                         </div>
-
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type='submit' class='btn btn-primary'>Simpan</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
 </body>
-
 </html>

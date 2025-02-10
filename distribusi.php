@@ -27,10 +27,12 @@
                             include 'koneksi.php';
 
                             $query = "SELECT d.id_distribusi, p.id_pupuk, p.nama_pupuk, pe.id_pengecer, pe.nama_pengecer, 
-                            d.satuan, d.tujuan, d.tanggal_distribusi, d.harga_distribusi, d.jumlah_keluar, d.harga_total, d.dokumentasi 
+                            d.satuan, d.tujuan, d.kecamatan, d.tanggal_distribusi, d.harga_distribusi, 
+                            d.jumlah_keluar, d.harga_total, d.dokumentasi 
                      FROM distribusi d
                      JOIN pupuk p ON d.id_pupuk = p.id_pupuk
                      JOIN pengecer pe ON d.id_pengecer = pe.id_pengecer";
+
 
                             $result = $koneksi->query($query);
                             $no = 1;
@@ -44,6 +46,7 @@
                 <th>Pengecer</th>
                 <th>Satuan</th>
                 <th>Tujuan</th>
+                <th>Kecamatan</th>
                 <th>Tanggal Distribusi</th>
                 <th>Harga Distribusi</th>
                 <th>Jumlah Keluar</th>
@@ -61,6 +64,7 @@
                                     <td>{$row['nama_pengecer']}</td>
                                     <td>{$row['satuan']}</td>
                                     <td>{$row['tujuan']}</td>
+                                     <td>{$row['kecamatan']}</td>
                                     <td>{$tanggal_distribusi}</td>
                                     <td>Rp " . number_format($row['harga_distribusi'], 2, ',', '.') . "</td>
                                     <td>{$row['jumlah_keluar']}</td>
@@ -99,61 +103,77 @@
                                                 <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                             </div>
                                             <div class='modal-body'>
-                                                <form action='crud/edit_distribusi.php' method='post' enctype='multipart/form-data'>
-                                                    <input type='hidden' name='id_distribusi' value='{$row['id_distribusi']}'>
-                                                    <div class='mb-3'>
-                                                        <label for='id_pupuk' class='form-label'>Nama Pupuk</label>
-                                                        <select class='form-control' name='id_pupuk' required>";
+                                               <form action='crud/edit_distribusi.php' method='post' enctype='multipart/form-data'>
+    <input type='hidden' name='id_distribusi' value='{$row['id_distribusi']}'>
+    
+    <div class='mb-3'>
+        <label for='id_pupuk' class='form-label'>Nama Pupuk</label>
+        <select class='form-control' name='id_pupuk' required>";
                                     $query_pupuk = "SELECT id_pupuk, nama_pupuk FROM pupuk";
                                     $result_pupuk = $koneksi->query($query_pupuk);
                                     while ($row_pupuk = $result_pupuk->fetch_assoc()) {
                                         $selected = ($row_pupuk['id_pupuk'] == $row['id_pupuk']) ? "selected" : "";
                                         echo "<option value='{$row_pupuk['id_pupuk']}' $selected>{$row_pupuk['nama_pupuk']}</option>";
                                     }
-                                    echo "                        </select>
-                                                    </div>
-                                                    <div class='mb-3'>
-                                                        <label for='id_pengecer' class='form-label'>Pengecer</label>
-                                                        <select class='form-control' name='id_pengecer' required>";
+                                    echo "</select>
+    </div>
+
+    <div class='mb-3'>
+        <label for='id_pengecer' class='form-label'>Pengecer</label>
+        <select class='form-control' name='id_pengecer' required>";
                                     $query_pengecer = "SELECT id_pengecer, nama_pengecer FROM pengecer";
                                     $result_pengecer = $koneksi->query($query_pengecer);
                                     while ($row_pengecer = $result_pengecer->fetch_assoc()) {
                                         $selected = ($row_pengecer['id_pengecer'] == $row['id_pengecer']) ? "selected" : "";
                                         echo "<option value='{$row_pengecer['id_pengecer']}' $selected>{$row_pengecer['nama_pengecer']}</option>";
                                     }
-                                    echo "                        </select>
-                                                    </div>
-                                                    <div class='mb-3'>
-                                                        <label for='satuan' class='form-label'>Satuan</label>
-                                                        <input type='text' class='form-control' name='satuan' value='{$row['satuan']}' required>
-                                                    </div>
-                                                    <div class='mb-3'>
-                                                        <label for='tujuan' class='form-label'>Tujuan</label>
-                                                        <input type='text' class='form-control' name='tujuan' value='{$row['tujuan']}' required>
-                                                    </div>
-                                                    <div class='mb-3'>
-                                                        <label for='tanggal_distribusi' class='form-label'>Tanggal Distribusi</label>
-                                                        <input type='date' class='form-control' name='tanggal_distribusi' value='{$row['tanggal_distribusi']}' required>
-                                                    </div>
-                                                    <div class='mb-3'>
-                                                        <label for='harga_distribusi' class='form-label'>Harga Distribusi</label>
-                                                        <input type='number' class='form-control' id='harga_distribusi_{$row['id_distribusi']}' name='harga_distribusi' value='{$row['harga_distribusi']}' required oninput='hitungHargaTotal({$row['id_distribusi']})'>
-                                                    </div>
-                                                    <div class='mb-3'>
-                                                        <label for='jumlah_keluar' class='form-label'>Jumlah Keluar</label>
-                                                        <input type='number' class='form-control' id='jumlah_keluar_{$row['id_distribusi']}' name='jumlah_keluar' value='{$row['jumlah_keluar']}' required oninput='hitungHargaTotal({$row['id_distribusi']})'>
-                                                    </div>
-                                                    <div class='mb-3'>
-                                                        <label for='harga_total' class='form-label'>Harga Total</label>
-                                                        <input type='text' class='form-control' id='harga_total_format_{$row['id_distribusi']}' readonly>
-                                                        <input type='hidden' class='form-control' id='harga_total_{$row['id_distribusi']}' name='harga_total' value='{$row['harga_total']}'>
-                                                    </div>
-                                                    <div class='mb-3'>
-                                                        <label for='dokumentasi' class='form-label'>Dokumentasi</label>
-                                                        <input type='file' class='form-control' name='dokumentasi'>
-                                                    </div>
-                                                    <button type='submit' class='btn btn-primary'>Simpan</button>
-                                                </form>
+                                    echo "</select>
+    </div>
+
+    <div class='mb-3'>
+        <label for='satuan' class='form-label'>Satuan</label>
+        <input type='text' class='form-control' name='satuan' value='{$row['satuan']}' required>
+    </div>
+
+    <div class='mb-3'>
+        <label for='tujuan' class='form-label'>Tujuan</label>
+        <input type='text' class='form-control' name='tujuan' value='{$row['tujuan']}' required>
+    </div>
+
+    <div class='mb-3'>
+        <label for='kecamatan' class='form-label'>Kecamatan</label>
+        <input type='text' class='form-control' name='kecamatan' value='{$row['kecamatan']}' required>
+    </div>
+
+    <div class='mb-3'>
+        <label for='tanggal_distribusi' class='form-label'>Tanggal Distribusi</label>
+        <input type='date' class='form-control' name='tanggal_distribusi' value='{$row['tanggal_distribusi']}' required>
+    </div>
+
+    <div class='mb-3'>
+        <label for='harga_distribusi' class='form-label'>Harga Distribusi</label>
+        <input type='number' class='form-control' id='harga_distribusi_{$row['id_distribusi']}' name='harga_distribusi' value='{$row['harga_distribusi']}' required oninput='hitungHargaTotal({$row['id_distribusi']})'>
+    </div>
+
+    <div class='mb-3'>
+        <label for='jumlah_keluar' class='form-label'>Jumlah Keluar</label>
+        <input type='number' class='form-control' id='jumlah_keluar_{$row['id_distribusi']}' name='jumlah_keluar' value='{$row['jumlah_keluar']}' required oninput='hitungHargaTotal({$row['id_distribusi']})'>
+    </div>
+
+    <div class='mb-3'>
+        <label for='harga_total' class='form-label'>Harga Total</label>
+        <input type='text' class='form-control' id='harga_total_format_{$row['id_distribusi']}' readonly>
+        <input type='hidden' class='form-control' id='harga_total_{$row['id_distribusi']}' name='harga_total' value='{$row['harga_total']}'>
+    </div>
+
+    <div class='mb-3'>
+        <label for='dokumentasi' class='form-label'>Dokumentasi</label>
+        <input type='file' class='form-control' name='dokumentasi'>
+    </div>
+
+    <button type='submit' class='btn btn-primary'>Simpan</button>
+</form>
+
                                             </div>
                                         </div>
                                     </div>
@@ -238,6 +258,10 @@
                             <input type="text" class="form-control" name="tujuan" required>
                         </div>
                         <div class="mb-3">
+                            <label for="kecamatan" class="form-label">Kecamatan</label>
+                            <input type="text" class="form-control" id="kecamatan" name="kecamatan" required>
+                        </div>
+                        <div class="mb-3">
                             <label for="jumlah_keluar" class="form-label">Jumlah Keluar</label>
                             <input type="number" class="form-control" id="jumlah_keluar" name="jumlah_keluar" required oninput="hitungHargaTotal()">
                         </div>
@@ -254,7 +278,6 @@
                             <label for="tanggal_distribusi" class="form-label">Tanggal Distribusi</label>
                             <input type="date" class="form-control" id="tanggal_distribusi" name="tanggal_distribusi" required>
                         </div>
-
                         <div class="mb-3">
                             <label for="dokumentasi" class="form-label">Dokumentasi</label>
                             <input type="file" class="form-control" name="dokumentasi">
@@ -265,6 +288,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

@@ -6,13 +6,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_pengecer = $_POST['id_pengecer'];
     $satuan = $_POST['satuan'];
     $tujuan = $_POST['tujuan'];
+    $kecamatan = $_POST['kecamatan']; 
     $jumlah_keluar = $_POST['jumlah_keluar'];
     $harga_distribusi = $_POST['harga_distribusi'];
     $harga_total = $_POST['harga_total'];
     $tanggal_distribusi = date("j F Y");
     $dokumentasi = '';
 
-    if (empty($id_pupuk) || empty($id_pengecer) || empty($satuan) || empty($tujuan) || empty($jumlah_keluar) || empty($harga_distribusi)) {
+    if (empty($id_pupuk) || empty($id_pengecer) || empty($satuan) || empty($tujuan) || empty($kecamatan) || empty($jumlah_keluar) || empty($harga_distribusi)) {
         echo "<script>alert('Semua field harus diisi!'); window.location.href='../distribusi.php';</script>";
         exit();
     }
@@ -36,7 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // **Ambil harga pupuk dari tabel `pupuk` untuk perhitungan stok**
     $query_harga_pupuk = "SELECT harga FROM pupuk WHERE id_pupuk = ?";
     $stmt_harga_pupuk = $koneksi->prepare($query_harga_pupuk);
     if (!$stmt_harga_pupuk) {
@@ -52,10 +52,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error: Harga pupuk tidak ditemukan!");
     }
 
-    $query_insert = "INSERT INTO distribusi (id_pupuk, id_pengecer, satuan, tujuan, tanggal_distribusi, jumlah_keluar, harga_distribusi, harga_total, dokumentasi) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $query_insert = "INSERT INTO distribusi (id_pupuk, id_pengecer, satuan, tujuan, kecamatan, tanggal_distribusi, jumlah_keluar, harga_distribusi, harga_total, dokumentasi) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_insert = $koneksi->prepare($query_insert);
-    $stmt_insert->bind_param("iisssidds", $id_pupuk, $id_pengecer, $satuan, $tujuan, $tanggal_distribusi, $jumlah_keluar, $harga_distribusi, $harga_total, $dokumentasi);
+    $stmt_insert->bind_param("iissssidds", $id_pupuk, $id_pengecer, $satuan, $tujuan, $kecamatan, $tanggal_distribusi, $jumlah_keluar, $harga_distribusi, $harga_total, $dokumentasi);
 
     if ($stmt_insert->execute()) {
         $query_check_stok = "SELECT stok, harga_total FROM stok WHERE id_pupuk = ?";
@@ -91,3 +91,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: ../distribusi.php");
     exit();
 }
+?>
