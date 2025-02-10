@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 30, 2025 at 03:59 PM
+-- Generation Time: Feb 10, 2025 at 02:19 AM
 -- Server version: 8.0.30
--- PHP Version: 7.4.1
+-- PHP Version: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -33,6 +33,7 @@ CREATE TABLE `distribusi` (
   `id_pengecer` int NOT NULL,
   `satuan` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `tujuan` text COLLATE utf8mb4_general_ci NOT NULL,
+  `kecamatan` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `harga_distribusi` decimal(15,2) NOT NULL,
   `harga_total` decimal(15,2) NOT NULL,
   `jumlah_keluar` int NOT NULL,
@@ -44,8 +45,8 @@ CREATE TABLE `distribusi` (
 -- Dumping data for table `distribusi`
 --
 
-INSERT INTO `distribusi` (`id_distribusi`, `id_pupuk`, `id_pengecer`, `satuan`, `tujuan`, `harga_distribusi`, `harga_total`, `jumlah_keluar`, `tanggal_distribusi`, `dokumentasi`) VALUES
-(6, 2, 1, 'pcs', 'Gudang', '10000.00', '10000.00', 1, '29 January 2025', '1738241478_tes.png');
+INSERT INTO `distribusi` (`id_distribusi`, `id_pupuk`, `id_pengecer`, `satuan`, `tujuan`, `kecamatan`, `harga_distribusi`, `harga_total`, `jumlah_keluar`, `tanggal_distribusi`, `dokumentasi`) VALUES
+(7, 2, 1, 'pcs', 'Gudang', 'wonocolo1', '2000.00', '40000.00', 20, '10 February 2025', '1739152815_tes.png');
 
 -- --------------------------------------------------------
 
@@ -68,6 +69,31 @@ CREATE TABLE `pengecer` (
 
 INSERT INTO `pengecer` (`id_pengecer`, `nama_pengecer`, `jenis_kelamin`, `tanggal_lahir`, `no_hp`, `alamat`) VALUES
 (1, 'Budi', 'Laki-laki', '2025-01-30', '082165443677', 'Padang');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `permintaan`
+--
+
+CREATE TABLE `permintaan` (
+  `id_permintaan` int NOT NULL,
+  `tanggal_permintaan` date NOT NULL,
+  `nama_distributor` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `id_pupuk` int NOT NULL,
+  `jumlah` int NOT NULL,
+  `kecamatan` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `dokumentasi` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `keterangan` text COLLATE utf8mb4_general_ci,
+  `status` enum('Pending','Diproses','Selesai','Ditolak') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Pending'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `permintaan`
+--
+
+INSERT INTO `permintaan` (`id_permintaan`, `tanggal_permintaan`, `nama_distributor`, `id_pupuk`, `jumlah`, `kecamatan`, `dokumentasi`, `keterangan`, `status`) VALUES
+(4, '2025-02-10', 'CV. Bungo Padi', 2, 10, 'wonocolo', '1739153930_tes.png', 'Baik', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -129,7 +155,7 @@ CREATE TABLE `stok` (
 --
 
 INSERT INTO `stok` (`id_stok`, `id_pupuk`, `stok`, `harga_total`) VALUES
-(2, 2, 3, '30000.00');
+(2, 2, 990, '9900000.00');
 
 -- --------------------------------------------------------
 
@@ -172,6 +198,13 @@ ALTER TABLE `pengecer`
   ADD PRIMARY KEY (`id_pengecer`);
 
 --
+-- Indexes for table `permintaan`
+--
+ALTER TABLE `permintaan`
+  ADD PRIMARY KEY (`id_permintaan`),
+  ADD KEY `id_pupuk` (`id_pupuk`);
+
+--
 -- Indexes for table `pupuk`
 --
 ALTER TABLE `pupuk`
@@ -207,13 +240,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `distribusi`
 --
 ALTER TABLE `distribusi`
-  MODIFY `id_distribusi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_distribusi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pengecer`
 --
 ALTER TABLE `pengecer`
   MODIFY `id_pengecer` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `permintaan`
+--
+ALTER TABLE `permintaan`
+  MODIFY `id_permintaan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `pupuk`
@@ -249,6 +288,12 @@ ALTER TABLE `user`
 ALTER TABLE `distribusi`
   ADD CONSTRAINT `distribusi_ibfk_1` FOREIGN KEY (`id_pupuk`) REFERENCES `pupuk` (`id_pupuk`) ON DELETE CASCADE,
   ADD CONSTRAINT `distribusi_ibfk_2` FOREIGN KEY (`id_pengecer`) REFERENCES `pengecer` (`id_pengecer`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `permintaan`
+--
+ALTER TABLE `permintaan`
+  ADD CONSTRAINT `permintaan_ibfk_1` FOREIGN KEY (`id_pupuk`) REFERENCES `pupuk` (`id_pupuk`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `pupuk_masuk`
