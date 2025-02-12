@@ -5,12 +5,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_permintaan = $_POST['id_permintaan'];
     $tanggal_permintaan = $_POST['tanggal_permintaan'];
     $nama_distributor = $_POST['nama_distributor'];
+    $id_pengecer = $_POST['id_pengecer'];
     $id_pupuk = $_POST['id_pupuk'];
     $jumlah = $_POST['jumlah'];
     $kecamatan = $_POST['kecamatan'];
     $keterangan = $_POST['keterangan'];
     $status = $_POST['status'];
-    $dokumentasi = $_POST['dokumentasi_lama'];
+    
+    $dokumentasi = isset($_POST['dokumentasi_lama']) ? $_POST['dokumentasi_lama'] : '';
 
     if (!empty($_FILES['dokumentasi']['name'])) {
         $target_dir = "../uploads/";
@@ -18,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $target_file = $target_dir . $file_name;
         $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-        if ($file_type != "jpg" && $file_type != "png" && $file_type != "jpeg" && $file_type != "pdf") {
+        if (!in_array($file_type, ['jpg', 'png', 'jpeg', 'pdf'])) {
             echo "<script>alert('Format file harus JPG, JPEG, PNG, atau PDF!'); window.location.href='../permintaan.php';</script>";
             exit();
         }
@@ -31,9 +33,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $query_update = "UPDATE permintaan SET tanggal_permintaan = ?, nama_distributor = ?, id_pupuk = ?, jumlah = ?, kecamatan = ?, dokumentasi = ?, keterangan = ?, status = ? WHERE id_permintaan = ?";
+    $query_update = "UPDATE permintaan 
+                     SET tanggal_permintaan = ?, nama_distributor = ?, id_pengecer = ?, id_pupuk = ?, jumlah = ?, kecamatan = ?, dokumentasi = ?, keterangan = ?, status = ? 
+                     WHERE id_permintaan = ?";
     $stmt_update = $koneksi->prepare($query_update);
-    $stmt_update->bind_param("ssisssssi", $tanggal_permintaan, $nama_distributor, $id_pupuk, $jumlah, $kecamatan, $dokumentasi, $keterangan, $status, $id_permintaan);
+    $stmt_update->bind_param("ssiiissssi", $tanggal_permintaan, $nama_distributor, $id_pengecer, $id_pupuk, $jumlah, $kecamatan, $dokumentasi, $keterangan, $status, $id_permintaan);
 
     if ($stmt_update->execute()) {
         echo "<script>alert('Permintaan berhasil diperbarui!'); window.location.href='../permintaan.php';</script>";

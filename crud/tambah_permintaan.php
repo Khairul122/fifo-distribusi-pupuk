@@ -4,6 +4,7 @@ include '../koneksi.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tanggal_permintaan = $_POST['tanggal_permintaan'];
     $nama_distributor = $_POST['nama_distributor'];
+    $id_pengecer = $_POST['id_pengecer']; 
     $id_pupuk = $_POST['id_pupuk'];
     $jumlah = $_POST['jumlah'];
     $kecamatan = $_POST['kecamatan'];
@@ -11,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = $_POST['status'];
     $dokumentasi = '';
 
-    if (empty($tanggal_permintaan) || empty($nama_distributor) || empty($id_pupuk) || empty($jumlah) || empty($kecamatan) || empty($status)) {
+    if (empty($tanggal_permintaan) || empty($nama_distributor) || empty($id_pengecer) || empty($id_pupuk) || empty($jumlah) || empty($kecamatan) || empty($status)) {
         echo "<script>alert('Semua field harus diisi!'); window.location.href='../permintaan.php';</script>";
         exit();
     }
@@ -35,9 +36,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $query_insert = "INSERT INTO permintaan (tanggal_permintaan, nama_distributor, id_pupuk, jumlah, kecamatan, dokumentasi, keterangan, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $query_insert = "INSERT INTO permintaan (tanggal_permintaan, nama_distributor, id_pengecer, id_pupuk, jumlah, kecamatan, dokumentasi, keterangan, status) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_insert = $koneksi->prepare($query_insert);
-    $stmt_insert->bind_param("ssisssss", $tanggal_permintaan, $nama_distributor, $id_pupuk, $jumlah, $kecamatan, $dokumentasi, $keterangan, $status);
+    $stmt_insert->bind_param("ssiiissss", $tanggal_permintaan, $nama_distributor, $id_pengecer, $id_pupuk, $jumlah, $kecamatan, $dokumentasi, $keterangan, $status);
 
     if ($stmt_insert->execute()) {
         echo "<script>alert('Permintaan berhasil ditambahkan!'); window.location.href='../permintaan.php';</script>";

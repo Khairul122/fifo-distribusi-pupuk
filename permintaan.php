@@ -25,31 +25,35 @@
                         <div class="card-body">
                             <?php
                             include 'koneksi.php';
-                            $query = "SELECT * FROM permintaan";
+                            $query = "SELECT permintaan.*, pengecer.nama_pengecer 
+              FROM permintaan 
+              JOIN pengecer ON permintaan.id_pengecer = pengecer.id_pengecer"; // Menambahkan relasi dengan pengecer
                             $result = $koneksi->query($query);
                             $no = 1;
 
                             if ($result->num_rows > 0) {
                                 echo "<table class='table table-bordered'>";
                                 echo "<thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Tanggal Permintaan</th>
-                                        <th>Nama Distributor</th>
-                                        <th>ID Pupuk</th>
-                                        <th>Jumlah</th>
-                                        <th>Kecamatan</th>
-                                        <th>Dokumentasi</th>
-                                        <th>Keterangan</th>
-                                        <th>Status</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>";
+            <tr>
+                <th>No</th>
+                <th>Tanggal Permintaan</th>
+                <th>Nama Distributor</th>
+                <th>Nama Pengecer</th>
+                <th>Nama Pupuk</th>
+                <th>Jumlah</th>
+                <th>Kecamatan</th>
+                <th>Dokumentasi</th>
+                <th>Keterangan</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>";
                                 echo "<tbody>";
+
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<tr>
-                                        <td>{$no}</td>
-                                        <td>";
+                <td>{$no}</td>
+                <td>";
                                     $bulanIndo = [
                                         1 => 'Januari',
                                         2 => 'Februari',
@@ -71,11 +75,12 @@
                                     $year = date('Y', $timestamp);
                                     echo "$day $month $year";
                                     echo "</td>
-                                        <td>{$row['nama_distributor']}</td>
-                                        <td>{$row['id_pupuk']}</td>
-                                        <td>{$row['jumlah']}</td>
-                                        <td>{$row['kecamatan']}</td>
-                                        <td>";
+                <td>{$row['nama_distributor']}</td>
+                <td>{$row['nama_pengecer']}</td> <!-- Menampilkan nama pengecer -->
+                <td>{$row['id_pupuk']}</td>
+                <td>{$row['jumlah']}</td>
+                <td>{$row['kecamatan']}</td>
+                <td>";
                                     $file_path = "uploads/{$row['dokumentasi']}";
                                     if (file_exists($file_path) && !empty($row['dokumentasi'])) {
                                         echo "<a href='$file_path' target='_blank'>Lihat</a>";
@@ -83,76 +88,88 @@
                                         echo "Tidak ada";
                                     }
                                     echo "</td>
-                                        <td>{$row['keterangan']}</td>
-                                        <td>{$row['status']}</td>
-                                        <td>
-                                            <button class='btn btn-warning btn-sm' data-bs-toggle='modal' data-bs-target='#modalEditPermintaan{$row['id_permintaan']}'>Edit</button>
-                                            <a href='crud/hapus_permintaan.php?id={$row['id_permintaan']}' onclick='return confirm(\"Apakah Anda yakin ingin menghapus data ini?\")' class='btn btn-danger btn-sm'>Hapus</a>
-                                        </td>
-                                    </tr>";
+                <td>{$row['keterangan']}</td>
+                <td>{$row['status']}</td>
+                <td>
+                    <button class='btn btn-warning btn-sm' data-bs-toggle='modal' data-bs-target='#modalEditPermintaan{$row['id_permintaan']}'>Edit</button>
+                    <a href='crud/hapus_permintaan.php?id={$row['id_permintaan']}' onclick='return confirm(\"Apakah Anda yakin ingin menghapus data ini?\")' class='btn btn-danger btn-sm'>Hapus</a>
+                </td>
+            </tr>";
 
                                     // Modal Edit Permintaan
                                     echo "<div class='modal fade' id='modalEditPermintaan{$row['id_permintaan']}' tabindex='-1' aria-labelledby='modalEditPermintaanLabel' aria-hidden='true'>
-                                        <div class='modal-dialog'>
-                                            <div class='modal-content'>
-                                                <div class='modal-header'>
-                                                    <h5 class='modal-title' id='modalEditPermintaanLabel'>Edit Data Permintaan</h5>
-                                                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-                                                </div>
-                                                <div class='modal-body'>
-                                                    <form action='crud/edit_permintaan.php' method='post' enctype='multipart/form-data'>
-                                                        <input type='hidden' name='id_permintaan' value='{$row['id_permintaan']}'>
-                                                        <div class='mb-3'>
-                                                            <label for='tanggal_permintaan' class='form-label'>Tanggal Permintaan</label>
-                                                            <input type='date' class='form-control' name='tanggal_permintaan' value='{$row['tanggal_permintaan']}' required>
-                                                        </div>
-                                                        <div class='mb-3'>
-                                                            <label for='nama_distributor' class='form-label'>Nama Distributor</label>
-                                                            <input type='text' class='form-control' name='nama_distributor' value='{$row['nama_distributor']}' required>
-                                                        </div>
-                                                        <div class='mb-3'>
-                                                            <label for='id_pupuk' class='form-label'>Nama Pupuk</label>
-                                                            <select class='form-control' name='id_pupuk' required>";
+                <div class='modal-dialog'>
+                    <div class='modal-content'>
+                        <div class='modal-header'>
+                            <h5 class='modal-title' id='modalEditPermintaanLabel'>Edit Data Permintaan</h5>
+                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                        </div>
+                        <div class='modal-body'>
+                            <form action='crud/edit_permintaan.php' method='post' enctype='multipart/form-data'>
+                                <input type='hidden' name='id_permintaan' value='{$row['id_permintaan']}'>
+                                <div class='mb-3'>
+                                    <label for='tanggal_permintaan' class='form-label'>Tanggal Permintaan</label>
+                                    <input type='date' class='form-control' name='tanggal_permintaan' value='{$row['tanggal_permintaan']}' required>
+                                </div>
+                                <div class='mb-3'>
+                                    <label for='nama_distributor' class='form-label'>Nama Distributor</label>
+                                    <input type='text' class='form-control' name='nama_distributor' value='{$row['nama_distributor']}' required>
+                                </div>
+                                <div class='mb-3'>
+                                    <label for='id_pengecer' class='form-label'>Nama Pengecer</label>
+                                    <select class='form-control' name='id_pengecer' required>";
+                                    $query_pengecer = "SELECT id_pengecer, nama_pengecer FROM pengecer";
+                                    $result_pengecer = $koneksi->query($query_pengecer);
+                                    while ($row_pengecer = $result_pengecer->fetch_assoc()) {
+                                        $selected = $row['id_pengecer'] == $row_pengecer['id_pengecer'] ? 'selected' : '';
+                                        echo "<option value='{$row_pengecer['id_pengecer']}' $selected>{$row_pengecer['nama_pengecer']}</option>";
+                                    }
+                                    echo "              </select>
+                                </div>
+                                <div class='mb-3'>
+                                    <label for='id_pupuk' class='form-label'>Nama Pupuk</label>
+                                    <select class='form-control' name='id_pupuk' required>";
                                     $query_pupuk = "SELECT id_pupuk, nama_pupuk FROM pupuk";
                                     $result_pupuk = $koneksi->query($query_pupuk);
                                     while ($row_pupuk = $result_pupuk->fetch_assoc()) {
                                         $selected = $row['id_pupuk'] == $row_pupuk['id_pupuk'] ? 'selected' : '';
                                         echo "<option value='{$row_pupuk['id_pupuk']}' $selected>{$row_pupuk['nama_pupuk']}</option>";
                                     }
-                                    echo "                      </select>
-                                                        </div>
-                                                        <div class='mb-3'>
-                                                            <label for='jumlah' class='form-label'>Jumlah</label>
-                                                            <input type='number' class='form-control' name='jumlah' value='{$row['jumlah']}' required>
-                                                        </div>
-                                                        <div class='mb-3'>
-                                                            <label for='kecamatan' class='form-label'>Kecamatan</label>
-                                                            <input type='text' class='form-control' name='kecamatan' value='{$row['kecamatan']}' required>
-                                                        </div>
-                                                        <div class='mb-3'>
-                                                            <label for='dokumentasi' class='form-label'>Dokumentasi</label>
-                                                            <input type='file' class='form-control' name='dokumentasi'>
-                                                            <small>File sebelumnya: {$row['dokumentasi']}</small>
-                                                        </div>
-                                                        <div class='mb-3'>
-                                                            <label for='keterangan' class='form-label'>Keterangan</label>
-                                                            <textarea class='form-control' name='keterangan' rows='3'>{$row['keterangan']}</textarea>
-                                                        </div>
-                                                        <div class='mb-3'>
-                                                            <label for='status' class='form-label'>Status</label>
-                                                            <select class='form-control' name='status' required>
-                                                                <option value='Pending' " . ($row['status'] == 'Pending' ? 'selected' : '') . ">Pending</option>
-                                                                <option value='Diproses' " . ($row['status'] == 'Diproses' ? 'selected' : '') . ">Diproses</option>
-                                                                <option value='Selesai' " . ($row['status'] == 'Selesai' ? 'selected' : '') . ">Selesai</option>
-                                                                <option value='Ditolak' " . ($row['status'] == 'Ditolak' ? 'selected' : '') . ">Ditolak</option>
-                                                            </select>
-                                                        </div>
-                                                        <button type='submit' class='btn btn-primary'>Simpan</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>";
+                                    echo "              </select>
+                                </div>
+                                <div class='mb-3'>
+                                    <label for='jumlah' class='form-label'>Jumlah</label>
+                                    <input type='number' class='form-control' name='jumlah' value='{$row['jumlah']}' required>
+                                </div>
+                                <div class='mb-3'>
+                                    <label for='kecamatan' class='form-label'>Kecamatan</label>
+                                    <input type='text' class='form-control' name='kecamatan' value='{$row['kecamatan']}' required>
+                                </div>
+                                <div class='mb-3'>
+                                    <label for='dokumentasi' class='form-label'>Dokumentasi</label>
+                                    <input type='file' class='form-control' name='dokumentasi'>
+                                    <small>File sebelumnya: {$row['dokumentasi']}</small>
+                                </div>
+                                <input type='hidden' name='dokumentasi_lama' value='{$row['dokumentasi']}'>
+                                <div class='mb-3'>
+                                    <label for='keterangan' class='form-label'>Keterangan</label>
+                                    <textarea class='form-control' name='keterangan' rows='3'>{$row['keterangan']}</textarea>
+                                </div>
+                                <div class='mb-3'>
+                                    <label for='status' class='form-label'>Status</label>
+                                    <select class='form-control' name='status' required>
+                                        <option value='Pending' " . ($row['status'] == 'Pending' ? 'selected' : '') . ">Pending</option>
+                                        <option value='Diproses' " . ($row['status'] == 'Diproses' ? 'selected' : '') . ">Diproses</option>
+                                        <option value='Selesai' " . ($row['status'] == 'Selesai' ? 'selected' : '') . ">Selesai</option>
+                                        <option value='Ditolak' " . ($row['status'] == 'Ditolak' ? 'selected' : '') . ">Ditolak</option>
+                                    </select>
+                                </div>
+                                <button type='submit' class='btn btn-primary'>Simpan</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>";
                                     $no++;
                                 }
                                 echo "</tbody></table>";
@@ -162,6 +179,7 @@
                             $koneksi->close();
                             ?>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -171,75 +189,91 @@
 
     <!-- Modal Tambah Data Permintaan -->
     <div class="modal fade" id="modalTambahPermintaan" tabindex="-1" aria-labelledby="modalTambahPermintaanLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTambahPermintaanLabel">Tambah Data Permintaan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="crud/tambah_permintaan.php" method="post" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="tanggal_permintaan" class="form-label">Tanggal Permintaan</label>
-                        <input type="date" class="form-control" id="tanggal_permintaan" name="tanggal_permintaan" required>
-                    </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTambahPermintaanLabel">Tambah Data Permintaan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="crud/tambah_permintaan.php" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="tanggal_permintaan" class="form-label">Tanggal Permintaan</label>
+                            <input type="date" class="form-control" id="tanggal_permintaan" name="tanggal_permintaan" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="nama_distributor" class="form-label">Nama Distributor</label>
-                        <input type="text" class="form-control" id="nama_distributor" name="nama_distributor" required>
-                    </div>
+                        <div class="mb-3">
+                            <label for="nama_distributor" class="form-label">Nama Distributor</label>
+                            <input type="text" class="form-control" id="nama_distributor" name="nama_distributor" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="id_pupuk" class="form-label">Nama Pupuk</label>
-                        <select class="form-control" id="id_pupuk" name="id_pupuk" required>
-                            <option value="">-- Pilih Pupuk --</option>
-                            <?php
-                            include 'koneksi.php';
-                            $query_pupuk = "SELECT id_pupuk, nama_pupuk FROM pupuk";
-                            $result_pupuk = $koneksi->query($query_pupuk);
-                            while ($row_pupuk = $result_pupuk->fetch_assoc()) {
-                                echo "<option value='{$row_pupuk['id_pupuk']}'>{$row_pupuk['nama_pupuk']}</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
+                        <div class="mb-3">
+                            <label for="id_pupuk" class="form-label">Nama Pupuk</label>
+                            <select class="form-control" id="id_pupuk" name="id_pupuk" required>
+                                <option value="">-- Pilih Pupuk --</option>
+                                <?php
+                                include 'koneksi.php';
+                                $query_pupuk = "SELECT id_pupuk, nama_pupuk FROM pupuk";
+                                $result_pupuk = $koneksi->query($query_pupuk);
+                                while ($row_pupuk = $result_pupuk->fetch_assoc()) {
+                                    echo "<option value='{$row_pupuk['id_pupuk']}'>{$row_pupuk['nama_pupuk']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="jumlah" class="form-label">Jumlah</label>
-                        <input type="number" class="form-control" id="jumlah" name="jumlah" required>
-                    </div>
+                        <div class="mb-3">
+                            <label for="id_pengecer" class="form-label">Nama Pengecer</label>
+                            <select class="form-control" id="id_pengecer" name="id_pengecer" required>
+                                <option value="">-- Pilih Pengecer --</option>
+                                <?php
+                                include 'koneksi.php';
+                                $query_pengecer = "SELECT id_pengecer, nama_pengecer FROM pengecer";
+                                $result_pengecer = $koneksi->query($query_pengecer);
+                                while ($row_pengecer = $result_pengecer->fetch_assoc()) {
+                                    echo "<option value='{$row_pengecer['id_pengecer']}'>{$row_pengecer['nama_pengecer']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="kecamatan" class="form-label">Kecamatan</label>
-                        <input type="text" class="form-control" id="kecamatan" name="kecamatan" required>
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="dokumentasi" class="form-label">Dokumentasi</label>
-                        <input type="file" class="form-control" id="dokumentasi" name="dokumentasi">
-                    </div>
+                        <div class="mb-3">
+                            <label for="jumlah" class="form-label">Jumlah</label>
+                            <input type="number" class="form-control" id="jumlah" name="jumlah" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="keterangan" class="form-label">Keterangan</label>
-                        <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
-                    </div>
+                        <div class="mb-3">
+                            <label for="kecamatan" class="form-label">Kecamatan</label>
+                            <input type="text" class="form-control" id="kecamatan" name="kecamatan" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
-                        <select class="form-control" id="status" name="status" required>
-                            <option value="Pending">Pending</option>
-                            <option value="Diproses">Diproses</option>
-                            <option value="Selesai">Selesai</option>
-                            <option value="Ditolak">Ditolak</option>
-                        </select>
-                    </div>
+                        <div class="mb-3">
+                            <label for="dokumentasi" class="form-label">Dokumentasi</label>
+                            <input type="file" class="form-control" id="dokumentasi" name="dokumentasi">
+                        </div>
 
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </form>
+                        <div class="mb-3">
+                            <label for="keterangan" class="form-label">Keterangan</label>
+                            <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-control" id="status" name="status" required>
+                                <option value="Pending">Pending</option>
+                                <option value="Diproses">Diproses</option>
+                                <option value="Selesai">Selesai</option>
+                                <option value="Ditolak">Ditolak</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </body>
 
 </html>

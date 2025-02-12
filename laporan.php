@@ -299,6 +299,66 @@
                     </div>
                 </div>
 
+
+                <!-- Laporan Permintaan -->
+                <div class="card mt-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Laporan Permintaan</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-md-2 mt-2 d-flex align-items-start" style="margin-bottom: 15px;">
+                            <button type="button" class="btn btn-success" onclick="window.open('cetak/laporan_permintaan.php?<?php echo http_build_query($_GET); ?>', '_blank')">Cetak Laporan Permintaan</button>
+                        </div>
+                        <?php
+                        include 'koneksi.php';
+                        $query = "SELECT permintaan.*, pengecer.nama_pengecer, pupuk.nama_pupuk 
+                  FROM permintaan 
+                  JOIN pengecer ON permintaan.id_pengecer = pengecer.id_pengecer
+                  JOIN pupuk ON permintaan.id_pupuk = pupuk.id_pupuk";
+                        $result = $koneksi->query($query);
+                        $no = 1;
+
+                        if ($result->num_rows > 0) {
+                            echo "<table class='table table-bordered'>";
+                            echo "<thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal Permintaan</th>
+                    <th>Nama Distributor</th>
+                    <th>Nama Pengecer</th>
+                    <th>Nama Pupuk</th>
+                    <th>Jumlah</th>
+                    <th>Kecamatan</th>
+                    <th>Keterangan</th>
+                    <th>Status</th>
+                </tr>
+            </thead>";
+                            echo "<tbody>";
+
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr>
+                    <td>{$no}</td>
+                    <td>{$row['tanggal_permintaan']}</td>
+                    <td>{$row['nama_distributor']}</td>
+                    <td>{$row['nama_pengecer']}</td>
+                    <td>{$row['nama_pupuk']}</td>
+                    <td>{$row['jumlah']}</td>
+                    <td>{$row['kecamatan']}</td>
+                    <td>{$row['keterangan']}</td>
+                    <td>{$row['status']}</td>
+                </tr>";
+                                $no++;
+                            }
+                            echo "</tbody></table>";
+                        } else {
+                            echo "<p class='text-center'>Tidak ada data.</p>";
+                        }
+                        $koneksi->close();
+                        ?>
+                    </div>
+                </div>
+
+            </div>
         </main>
         <footer class="app-footer">
         </footer>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 10, 2025 at 02:19 AM
+-- Generation Time: Feb 12, 2025 at 02:27 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -81,6 +81,7 @@ CREATE TABLE `permintaan` (
   `tanggal_permintaan` date NOT NULL,
   `nama_distributor` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `id_pupuk` int NOT NULL,
+  `id_pengecer` int NOT NULL,
   `jumlah` int NOT NULL,
   `kecamatan` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `dokumentasi` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -92,8 +93,8 @@ CREATE TABLE `permintaan` (
 -- Dumping data for table `permintaan`
 --
 
-INSERT INTO `permintaan` (`id_permintaan`, `tanggal_permintaan`, `nama_distributor`, `id_pupuk`, `jumlah`, `kecamatan`, `dokumentasi`, `keterangan`, `status`) VALUES
-(4, '2025-02-10', 'CV. Bungo Padi', 2, 10, 'wonocolo', '1739153930_tes.png', 'Baik', 'Pending');
+INSERT INTO `permintaan` (`id_permintaan`, `tanggal_permintaan`, `nama_distributor`, `id_pupuk`, `id_pengecer`, `jumlah`, `kecamatan`, `dokumentasi`, `keterangan`, `status`) VALUES
+(6, '2025-02-12', 'CV. Bungo Padi', 2, 1, 10, 'wonocolo', '1739325801_tes.png', 'Budi', 'Diproses');
 
 -- --------------------------------------------------------
 
@@ -202,7 +203,8 @@ ALTER TABLE `pengecer`
 --
 ALTER TABLE `permintaan`
   ADD PRIMARY KEY (`id_permintaan`),
-  ADD KEY `id_pupuk` (`id_pupuk`);
+  ADD KEY `id_pupuk` (`id_pupuk`),
+  ADD KEY `permintaan_ibfk_2` (`id_pengecer`);
 
 --
 -- Indexes for table `pupuk`
@@ -252,7 +254,7 @@ ALTER TABLE `pengecer`
 -- AUTO_INCREMENT for table `permintaan`
 --
 ALTER TABLE `permintaan`
-  MODIFY `id_permintaan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_permintaan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `pupuk`
@@ -293,7 +295,8 @@ ALTER TABLE `distribusi`
 -- Constraints for table `permintaan`
 --
 ALTER TABLE `permintaan`
-  ADD CONSTRAINT `permintaan_ibfk_1` FOREIGN KEY (`id_pupuk`) REFERENCES `pupuk` (`id_pupuk`) ON DELETE CASCADE;
+  ADD CONSTRAINT `permintaan_ibfk_1` FOREIGN KEY (`id_pupuk`) REFERENCES `pupuk` (`id_pupuk`) ON DELETE CASCADE,
+  ADD CONSTRAINT `permintaan_ibfk_2` FOREIGN KEY (`id_pengecer`) REFERENCES `pengecer` (`id_pengecer`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `pupuk_masuk`
