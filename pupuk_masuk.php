@@ -61,38 +61,57 @@
                     </td>
                   </tr>";
 
-                                    echo "<div class='modal fade' id='modalEditPupukMasuk{$row['id_pupuk_masuk']}' tabindex='-1' aria-labelledby='modalEditPupukMasukLabel' aria-hidden='true'>
-                    <div class='modal-dialog'>
-                        <div class='modal-content'>
-                            <div class='modal-header'>
-                                <h5 class='modal-title'>Edit Pupuk Masuk</h5>
-                                <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-                            </div>
-                            <div class='modal-body'>
-                                <form action='crud/edit_pupuk_masuk.php' method='post' enctype='multipart/form-data'>
-                                    <input type='hidden' name='id_pupuk_masuk' value='{$row['id_pupuk_masuk']}'>
-                                    <div class='mb-3'>
-                                        <label for='jumlah_masuk' class='form-label'>Jumlah Masuk</label>
-                                        <input type='number' class='form-control' name='jumlah_masuk' value='{$row['jumlah_masuk']}' required>
-                                    </div>
-                                    <div class='mb-3'>
-                                        <label for='tanggal_masuk' class='form-label'>Tanggal Masuk</label>
-                                        <input type='date' class='form-control' name='tanggal_masuk' value='{$row['tanggal_masuk']}' required>
-                                    </div>
-                                    <div class='mb-3'>
-                                        <label for='tanggal_kadaluarsa' class='form-label'>Tanggal Kadaluarsa</label>
-                                        <input type='date' class='form-control' name='tanggal_kadaluarsa' value='{$row['tanggal_kadaluarsa']}' required>
-                                    </div>
-                                    <div class='mb-3'>
-                                        <label for='dokumentasi' class='form-label'>Dokumentasi</label>
-                                        <input type='file' class='form-control' name='dokumentasi'>
-                                    </div>
-                                    <button type='submit' class='btn btn-primary'>Simpan</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                  </div>";
+                  echo "<div class='modal fade' id='modalEditPupukMasuk{$row['id_pupuk_masuk']}' tabindex='-1' aria-labelledby='modalEditPupukMasukLabel' aria-hidden='true'>
+                  <div class='modal-dialog'>
+                      <div class='modal-content'>
+                          <div class='modal-header'>
+                              <h5 class='modal-title'>Edit Pupuk Masuk</h5>
+                              <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                          </div>
+                          <div class='modal-body'>
+                              <form action='crud/edit_pupuk_masuk.php' method='post' enctype='multipart/form-data'>
+                                  <input type='hidden' name='id_pupuk_masuk' value='{$row['id_pupuk_masuk']}'>
+          
+                                  <div class='mb-3'>
+                                      <label for='id_pupuk' class='form-label'>Jenis Pupuk</label>
+                                      <select class='form-control' name='id_pupuk' required>
+                                          <option value=''>-- Pilih Pupuk --</option>";
+                                          
+                                          $query_pupuk = "SELECT id_pupuk, nama_pupuk FROM pupuk";
+                                          $result_pupuk = $koneksi->query($query_pupuk);
+                                          
+                                          while ($pupuk = $result_pupuk->fetch_assoc()) {
+                                              $selected = ($pupuk['id_pupuk'] == $row['id_pupuk']) ? "selected" : "";
+                                              echo "<option value='{$pupuk['id_pupuk']}' $selected>{$pupuk['nama_pupuk']}</option>";
+                                          }
+                                          
+                                      echo "</select>
+                                  </div>
+          
+                                  <div class='mb-3'>
+                                      <label for='jumlah_masuk' class='form-label'>Jumlah Masuk</label>
+                                      <input type='number' class='form-control' name='jumlah_masuk' value='{$row['jumlah_masuk']}' required>
+                                  </div>
+                                  <div class='mb-3'>
+                                      <label for='tanggal_masuk' class='form-label'>Tanggal Masuk</label>
+                                      <input type='date' class='form-control' name='tanggal_masuk' value='{$row['tanggal_masuk']}' required>
+                                  </div>
+                                  <div class='mb-3'>
+                                      <label for='tanggal_kadaluarsa' class='form-label'>Tanggal Kadaluarsa</label>
+                                      <input type='date' class='form-control' name='tanggal_kadaluarsa' value='{$row['tanggal_kadaluarsa']}' required>
+                                  </div>
+                                  <div class='mb-3'>
+                                      <label for='dokumentasi' class='form-label'>Dokumentasi (Opsional)</label>
+                                      <input type='file' class='form-control' name='dokumentasi'>
+                                      <small>File sebelumnya: <a href='../uploads/{$row['dokumentasi']}' target='_blank'>{$row['dokumentasi']}</a></small>
+                                  </div>
+                                  <button type='submit' class='btn btn-primary'>Simpan</button>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+                </div>";
+          
                                     $no++;
                                 }
                                 echo "</tbody></table>";
