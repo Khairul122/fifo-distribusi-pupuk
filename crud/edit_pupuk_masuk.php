@@ -46,9 +46,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $dokumentasi = $dokumentasi_lama;
     }
 
-    $query_update = "UPDATE pupuk_masuk SET jumlah_masuk = ?, tanggal_masuk = ?, tanggal_kadaluarsa = ?, dokumentasi = ? WHERE id_pupuk_masuk = ?";
+    $query_update = "UPDATE pupuk_masuk SET id_pupuk = ?, jumlah_masuk = ?, tanggal_masuk = ?, tanggal_kadaluarsa = ?, dokumentasi = ? WHERE id_pupuk_masuk = ?";
     $stmt_update = $koneksi->prepare($query_update);
-    $stmt_update->bind_param("isssi", $jumlah_masuk_baru, $tanggal_masuk, $tanggal_kadaluarsa, $dokumentasi, $id_pupuk_masuk);
+    $stmt_update->bind_param("iisssi", $id_pupuk, $jumlah_masuk_baru, $tanggal_masuk, $tanggal_kadaluarsa, $dokumentasi, $id_pupuk_masuk);
+    
     
     if ($stmt_update->execute()) {
         $selisih_stok = $jumlah_masuk_baru - $jumlah_masuk_lama;
